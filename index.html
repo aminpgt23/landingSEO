@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Luxvint Studio</title>
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand-300: #e2a96a;
+      --brand-400: #d4854a;
+      --brand-500: #c4651f;
+      --brand-600: #b35518;
+      --brand-700: #9a4512;
+      --brand-800: #7d360d;
+      --brand-900: #5c2509;
+      --brand-950: #3a1505;
+      --bg-dark: #0f0d0b;
+      --text-muted: rgba(255,255,255,0.5);
+      --text-dim: rgba(255,255,255,0.7);
+      --card-bg: rgba(255,255,255,0.05);
+      --card-border: rgba(255,255,255,0.07);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 64px;
+      background: rgba(0,0,0,0.25);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: background 0.3s;
+    }
+    nav.scrolled { background: rgba(15,13,11,0.92); }
+
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--brand-600), var(--brand-800));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; color: #fff;
+    }
+    .nav-logo-text { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #fff; }
+
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a { color: rgba(255,255,255,0.65); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: #fff; }
+
+    .nav-cta {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--brand-700); color: #fff;
+      font-size: 13px; font-weight: 600;
+      padding: 9px 20px; border-radius: 12px;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--brand-600); }
+
+    /* ── HERO CAROUSEL ── */
+    #hero {
+      position: relative; height: 100vh; overflow: hidden;
+    }
+    .slide {
+      position: absolute; inset: 0;
+      opacity: 0; transition: opacity 0.9s ease;
+    }
+    .slide.active { opacity: 1; z-index: 1; }
+
+    .slide img {
+      width: 100%; height: 100%; object-fit: cover;
+      transform: scale(1.06);
+      transition: transform 8s ease;
+    }
+    .slide.active img { transform: scale(1); }
+
+    .slide-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, rgba(15,13,11,0.82) 0%, rgba(15,13,11,0.3) 60%, transparent 100%);
+    }
+    .slide-overlay-bottom {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 50%);
+    }
+
+    .hero-content {
+      position: absolute; z-index: 10;
+      top: 50%; left: 80px;
+      transform: translateY(-50%);
+      max-width: 560px;
+    }
+    .slide-badge {
+      display: inline-block;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 5px 14px; border-radius: 999px;
+      border: 1px solid rgba(196,101,31,0.5);
+      color: var(--brand-300);
+      background: rgba(196,101,31,0.12);
+      margin-bottom: 18px;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s 0.2s, transform 0.6s 0.2s;
+    }
+    .slide.active .slide-badge { opacity: 1; transform: translateY(0); }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(42px, 6vw, 72px);
+      font-weight: 800; line-height: 1.1;
+      white-space: pre-line; margin-bottom: 18px;
+      opacity: 0; transform: translateY(25px);
+      transition: opacity 0.6s 0.35s, transform 0.6s 0.35s;
+    }
+    .slide.active .hero-title { opacity: 1; transform: translateY(0); }
+
+    .hero-desc {
+      font-size: 16px; color: rgba(255,255,255,0.68);
+      line-height: 1.7; margin-bottom: 32px;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s 0.5s, transform 0.6s 0.5s;
+    }
+    .slide.active .hero-desc { opacity: 1; transform: translateY(0); }
+
+    .hero-btns {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s 0.65s, transform 0.6s 0.65s;
+    }
+    .slide.active .hero-btns { opacity: 1; transform: translateY(0); }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #fff; color: #1a1510;
+      font-size: 14px; font-weight: 700;
+      padding: 13px 24px; border-radius: 12px;
+      text-decoration: none; cursor: pointer; border: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { background: #f0e6d8; transform: translateY(-1px); }
+
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid rgba(255,255,255,0.22); color: rgba(255,255,255,0.8);
+      font-size: 13px; font-weight: 500;
+      padding: 13px 24px; border-radius: 12px;
+      text-decoration: none; cursor: pointer; background: transparent;
+      transition: background 0.2s;
+    }
+    .btn-outline:hover { background: rgba(255,255,255,0.1); }
+
+    /* Carousel controls */
+    .carousel-controls {
+      position: absolute; bottom: 36px; right: 48px;
+      z-index: 20; display: flex; align-items: center; gap: 10px;
+    }
+    .c-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(255,255,255,0.1); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    .c-btn:hover { background: rgba(255,255,255,0.2); }
+
+    .dots { display: flex; gap: 6px; align-items: center; }
+    .dot {
+      height: 6px; border-radius: 99px; background: rgba(255,255,255,0.3);
+      width: 6px; cursor: pointer;
+      transition: width 0.3s, background 0.3s;
+      border: none;
+    }
+    .dot.active { width: 24px; background: #fff; }
+
+    /* ── STATS BAR ── */
+    #stats {
+      background: var(--brand-900);
+      border-top: 1px solid var(--brand-800);
+      border-bottom: 1px solid var(--brand-800);
+    }
+    .stats-grid {
+      max-width: 900px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+    }
+    .stat-item {
+      padding: 24px 20px; text-align: center;
+      border-right: 1px solid var(--brand-800);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px; font-weight: 700;
+      color: var(--brand-300);
+    }
+    .stat-label { font-size: 12px; color: var(--brand-500); margin-top: 4px; }
+
+    /* ── SECTIONS COMMON ── */
+    section { padding: 96px 64px; }
+    .section-tag {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--brand-500); margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 700; color: #fff; line-height: 1.2;
+    }
+    .section-title em { color: var(--brand-400); font-style: italic; }
+    .section-subtitle { color: var(--text-muted); margin-top: 14px; font-size: 15px; line-height: 1.7; }
+
+    /* ── SERVICES ── */
+    #layanan { background: var(--bg-dark); }
+    .services-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 18px; margin-top: 56px; max-width: 1100px; margin-left: auto; margin-right: auto;
+    }
+    .service-card {
+      padding: 28px; border-radius: 20px;
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      transition: background 0.3s, border-color 0.3s, transform 0.3s;
+    }
+    .service-card:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(196,101,31,0.3);
+      transform: translateY(-4px);
+    }
+    .service-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--brand-900), var(--brand-950));
+      border: 1px solid var(--brand-800);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; color: var(--brand-400);
+      margin-bottom: 18px;
+    }
+    .service-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px; font-weight: 600; color: #fff; margin-bottom: 8px;
+    }
+    .service-desc { font-size: 13px; color: rgba(255,255,255,0.48); line-height: 1.7; }
+
+    /* ── SIMULASI ── */
+    #simulasi {
+      background: linear-gradient(135deg, var(--brand-950) 0%, #1a1008 50%, var(--bg-dark) 100%);
+    }
+    .sim-wrapper {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1.4fr; gap: 60px; align-items: start;
+    }
+    .sim-features { margin-top: 28px; display: flex; flex-direction: column; gap: 14px; }
+    .sim-feature {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: rgba(255,255,255,0.65);
+    }
+    .sim-feature i { color: var(--brand-500); font-size: 14px; flex-shrink: 0; }
+
+    /* ── SIMULASI TOOL ── */
+    .sim-panel {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px; padding: 32px;
+      backdrop-filter: blur(10px);
+    }
+    .sim-panel-title {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.15em;
+      text-transform: uppercase; color: rgba(255,255,255,0.3);
+      margin-bottom: 24px;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.08em; }
+    .form-group input, .form-group select {
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; padding: 10px 14px;
+      font-size: 14px; color: #fff; font-family: 'Inter', sans-serif;
+      transition: border-color 0.2s;
+      appearance: none; -webkit-appearance: none;
+    }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--brand-500); }
+    .form-group select option { background: #1a1008; }
+
+    .template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+    .template-card {
+      border-radius: 12px; overflow: hidden; cursor: pointer;
+      border: 2px solid rgba(255,255,255,0.1);
+      position: relative;
+      transition: border-color 0.2s;
+      aspect-ratio: 4/3;
+    }
+    .template-card img { width: 100%; height: 100%; object-fit: cover; }
+    .template-card-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+      padding: 12px 8px 6px;
+      font-size: 10px; font-weight: 600; color: #fff; text-align: center;
+    }
+    .template-card.selected { border-color: var(--brand-400); }
+    .template-card.selected::after {
+      content: '\f00c';
+      font-family: 'Font Awesome 6 Free'; font-weight: 900;
+      position: absolute; top: 6px; right: 6px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--brand-500); color: #fff;
+      font-size: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .material-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .chip {
+      padding: 6px 14px; border-radius: 999px;
+      font-size: 12px; font-weight: 500; cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.6);
+      background: rgba(255,255,255,0.05);
+      transition: all 0.2s;
+    }
+    .chip.active {
+      background: rgba(196,101,31,0.25);
+      border-color: var(--brand-500);
+      color: var(--brand-300);
+    }
+
+    .estimate-result {
+      background: rgba(196,101,31,0.1); border: 1px solid rgba(196,101,31,0.25);
+      border-radius: 16px; padding: 20px; margin-top: 20px;
+    }
+    .estimate-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 13px; }
+    .estimate-row:last-child { border-bottom: none; }
+    .estimate-row .label { color: rgba(255,255,255,0.55); }
+    .estimate-row .val { font-weight: 600; color: #fff; font-variant-numeric: tabular-nums; }
+    .estimate-total { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.12); }
+    .estimate-total .label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); }
+    .estimate-total .val { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--brand-300); font-weight: 700; }
+    .estimate-dp { font-size: 12px; color: var(--brand-500); text-align: right; margin-top: 4px; }
+
+    .btn-sim {
+      width: 100%; margin-top: 18px;
+      padding: 13px; border-radius: 12px;
+      background: var(--brand-700); color: #fff;
+      font-size: 14px; font-weight: 700;
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-sim:hover { background: var(--brand-600); }
+
+    .lokasi-badge {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px; padding: 12px 16px; margin-top: 16px;
+      font-size: 12px; color: rgba(255,255,255,0.55);
+    }
+    .lokasi-badge i { color: var(--brand-500); font-size: 14px; }
+
+    /* ── TESTIMONIALS ── */
+    #tentang { background: var(--bg-dark); }
+    .testi-grid {
+      max-width: 1000px; margin: 52px auto 0;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
+    }
+    .testi-card {
+      padding: 24px; border-radius: 20px;
+      background: var(--card-bg); border: 1px solid var(--card-border);
+    }
+    .stars { display: flex; gap: 3px; margin-bottom: 14px; color: var(--brand-400); font-size: 12px; }
+    .testi-text { font-size: 13px; color: rgba(255,255,255,0.58); line-height: 1.75; margin-bottom: 18px; font-style: italic; }
+    .testi-author { display: flex; align-items: center; gap: 10px; }
+    .testi-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--brand-800); color: var(--brand-300);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .testi-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .testi-loc { font-size: 11px; color: rgba(255,255,255,0.35); }
+
+    /* ── CONTACT ── */
+    #kontak {
+      background: var(--brand-950);
+      border-top: 1px solid var(--brand-900);
+      text-align: center;
+    }
+    .contact-cards {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+      max-width: 640px; margin: 40px auto;
+    }
+    .contact-card {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 14px 20px; border-radius: 14px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07);
+      font-size: 12px; color: rgba(255,255,255,0.6); text-decoration: none;
+      transition: background 0.2s;
+    }
+    .contact-card:hover { background: rgba(255,255,255,0.09); color: #fff; }
+    .contact-card i { color: var(--brand-500); font-size: 14px; }
+
+    .btn-wa {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #25D366; color: #fff;
+      font-size: 15px; font-weight: 700;
+      padding: 15px 32px; border-radius: 14px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      margin-top: 10px;
+    }
+    .btn-wa:hover { background: #1ebe5c; transform: translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 24px 64px; text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 12px; color: rgba(255,255,255,0.2);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 14px 24px; }
+      .nav-links { display: none; }
+      section { padding: 72px 24px; }
+      .hero-content { left: 28px; max-width: 90%; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+      .services-grid { grid-template-columns: 1fr 1fr; }
+      .sim-wrapper { grid-template-columns: 1fr; gap: 36px; }
+      .testi-grid { grid-template-columns: 1fr; }
+      .contact-cards { grid-template-columns: 1fr; max-width: 300px; }
+      footer { padding: 20px 24px; }
+    }
+    @media (max-width: 600px) {
+      .services-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .template-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── ANIMATION ── */
+    .fade-up {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.6s, transform 0.6s;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .fade-up:nth-child(2) { transition-delay: 0.1s; }
+    .fade-up:nth-child(3) { transition-delay: 0.2s; }
+    .fade-up:nth-child(4) { transition-delay: 0.3s; }
+    .fade-up:nth-child(5) { transition-delay: 0.4s; }
+    .fade-up:nth-child(6) { transition-delay: 0.5s; }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon"><i class="fa-solid fa-layer-group" style="font-size:14px"></i></div>
+      <span class="nav-logo-text">Luxvint Studio</span>
+    </a>
+    <div class="nav-links">
+      <a href="#layanan">Layanan</a>
+      <a href="#simulasi">Simulasi</a>
+      <a href="#tentang">Tentang</a>
+      <a href="#kontak">Kontak</a>
+    </div>
+    <a href="#simulasi" class="nav-cta">
+      Simulasi Ruangan &nbsp;<i class="fa-solid fa-arrow-right" style="font-size:12px"></i>
+    </a>
+  </nav>
+
+  <!-- HERO CAROUSEL -->
+  <section id="hero">
+    <!-- Slide 1 -->
+    <div class="slide active" id="slide-0">
+      <img src="img/slide1.jpg" alt="Ruang Klasic" onerror="this.src='https://images.livspace-cdn.com/plain/https://d3gq2merok8n5r.cloudfront.net/abhinav/ond-1634120396-Obfdc/jas-1657179080-NnXAg/kitchen-1657189966-XPfvA/132-1658907853-Q5EAJ.png'" />
+      <div class="slide-overlay"></div>
+      <div class="slide-overlay-bottom"></div>
+    </div>
+    <!-- Slide 2 -->
+    <div class="slide" id="slide-1">
+      <img src="img/slide2.jpg" alt="Kamar Tidur Scandinavian" onerror="this.src='https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=1400&q=80'" />
+      <div class="slide-overlay"></div>
+      <div class="slide-overlay-bottom"></div>
+    </div>
+    <!-- Slide 3 -->
+    <div class="slide" id="slide-2">
+      <img src="img/slide3.jpg" alt="Dapur Kontemporer" onerror="this.src='https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1400&q=80'" />
+      <div class="slide-overlay"></div>
+      <div class="slide-overlay-bottom"></div>
+    </div>
+    <!-- Slide 4 -->
+    <div class="slide" id="slide-3">
+      <img src="img/slide4.jpg" alt="Ruang Kerja Industrial" onerror="this.src='https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=1400&q=80'" />
+      <div class="slide-overlay"></div>
+      <div class="slide-overlay-bottom"></div>
+    </div>
+
+    <!-- Hero Content -->
+    <div class="hero-content" id="heroContent">
+      <span class="slide-badge" id="heroBadge">Minimalis Modern</span>
+      <h1 class="hero-title" id="heroTitle">Ruang Tamu<br>Minimalis Modern</h1>
+      <p class="hero-desc" id="heroDesc">Desain bersih dengan sentuhan hangat kayu dan material premium pilihan terbaik untuk rumah Anda</p>
+      <div class="hero-btns">
+        <a href="#simulasi" class="btn-primary">Simulasi Ruangan &nbsp;<i class="fa-solid fa-arrow-right" style="font-size:13px"></i></a>
+        <a href="#layanan" class="btn-outline">Lihat Layanan</a>
+      </div>
+    </div>
+
+    <!-- Carousel controls -->
+    <div class="carousel-controls">
+      <button class="c-btn" onclick="prevSlide()"><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="dots" id="dots"></div>
+      <button class="c-btn" onclick="nextSlide()"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div id="stats">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-num">250+</div>
+        <div class="stat-label">Proyek Selesai</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">98%</div>
+        <div class="stat-label">Kepuasan Klien</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">8+</div>
+        <div class="stat-label">Tahun Pengalaman</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">15+</div>
+        <div class="stat-label">Tim Profesional</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYANAN -->
+  <section id="layanan">
+    <div style="text-align:center; max-width:600px; margin:0 auto;">
+      <p class="section-tag">Apa yang Kami Tawarkan</p>
+      <h2 class="section-title">Layanan <em>Profesional</em></h2>
+      <p class="section-subtitle">Dari konsultasi awal hingga serah terima kunci — setiap langkah dikerjakan dengan standar tertinggi</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card fade-up">
+        <div class="service-icon"><i class="fa-solid fa-palette"></i></div>
+        <div class="service-title">Desain Interior</div>
+        <p class="service-desc">Konsultasi, gambar kerja 2D/3D, dan visualisasi realistis sesuai karakter dan keinginan Anda</p>
+      </div>
+      <div class="service-card fade-up">
+        <div class="service-icon"><i class="fa-solid fa-couch"></i></div>
+        <div class="service-title">Furniture Custom</div>
+        <p class="service-desc">Pembuatan furniture sesuai ukuran dan desain — dari kayu jati hingga material HPL modern</p>
+      </div>
+      <div class="service-card fade-up">
+        <div class="service-icon"><i class="fa-solid fa-helmet-safety"></i></div>
+        <div class="service-title">Renovasi Total</div>
+        <p class="service-desc">Dari konsep hingga serah terima — kami kelola seluruh proses renovasi rumah Anda</p>
+      </div>
+      <div class="service-card fade-up">
+        <div class="service-icon"><i class="fa-solid fa-calculator"></i></div>
+        <div class="service-title">Estimasi Biaya</div>
+        <p class="service-desc">Kalkulator biaya transparan berdasarkan luas ruangan, material, dan gaya desain pilihan</p>
+      </div>
+      <div class="service-card fade-up">
+        <div class="service-icon"><i class="fa-solid fa-seedling"></i></div>
+        <div class="service-title">Dekorasi & Styling</div>
+        <p class="service-desc">Sentuhan akhir yang menyempurnakan — pemilihan furnitur, tanaman, dan aksesori ruang</p>
+      </div>
+      <div class="service-card fade-up">
+        <div class="service-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+        <div class="service-title">Manajemen Proyek</div>
+        <p class="service-desc">Pengawasan ketat di setiap tahap dengan laporan progres berkala untuk ketenangan Anda</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIMULASI RUANGAN -->
+  <section id="simulasi">
+    <div class="sim-wrapper">
+      <!-- Left: description -->
+      <div>
+        <p class="section-tag">Fitur Unggulan</p>
+        <h2 class="section-title">Simulasi &amp;<br><em>Estimasi Biaya</em><br>Interior</h2>
+        <p class="section-subtitle" style="margin-top:14px">Masukkan dimensi ruangan, pilih material dan template desain, lalu dapatkan estimasi biaya lengkap seketika — transparan dan akurat.</p>
+        <div class="sim-features">
+          <div class="sim-feature"><i class="fa-solid fa-check-circle"></i> Kalkulasi otomatis kebutuhan material per m²</div>
+          <div class="sim-feature"><i class="fa-solid fa-check-circle"></i> Estimasi biaya berdasarkan style & kompleksitas</div>
+          <div class="sim-feature"><i class="fa-solid fa-check-circle"></i> Pemilihan material HPL, cat, granit, wallpaper & lebih</div>
+          <div class="sim-feature"><i class="fa-solid fa-check-circle"></i> Preview template desain 6 gaya ruangan</div>
+          <div class="sim-feature"><i class="fa-solid fa-check-circle"></i> Estimasi DP dan cicilan awal proyek</div>
+          <div class="sim-feature"><i class="fa-solid fa-check-circle"></i> Pengukuran on-site tersedia di Jakarta, Tangerang & Banten</div>
+        </div>
+        <div class="lokasi-badge">
+          <i class="fa-solid fa-location-dot"></i>
+          <span>Layanan on-site: <strong style="color:#fff">Jakarta &bull; Tangerang &bull; Banten</strong></span>
+        </div>
+      </div>
+
+      <!-- Right: simulator panel -->
+      <div class="sim-panel">
+        <div class="sim-panel-title"><i class="fa-solid fa-ruler-combined" style="margin-right:6px;color:var(--brand-500)"></i>Kalkulator Simulasi Ruangan</div>
+
+        <!-- Room name + type -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nama Ruangan</label>
+            <input type="text" id="roomName" placeholder="cth. Ruang Tamu" />
+          </div>
+          <div class="form-group">
+            <label>Tipe Ruangan</label>
+            <select id="roomType" onchange="calcEstimate()">
+              <option value="living">Ruang Tamu</option>
+              <option value="bedroom">Kamar Tidur</option>
+              <option value="kitchen">Dapur</option>
+              <option value="office">Ruang Kerja</option>
+              <option value="dining">Ruang Makan</option>
+              <option value="bathroom">Kamar Mandi</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Dimensions -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Panjang (meter)</label>
+            <input type="number" id="roomL" value="4" min="1" max="30" oninput="calcEstimate()" />
+          </div>
+          <div class="form-group">
+            <label>Lebar (meter)</label>
+            <input type="number" id="roomW" value="5" min="1" max="30" oninput="calcEstimate()" />
+          </div>
+        </div>
+
+        <!-- Material -->
+        <div class="form-group" style="margin-bottom:16px">
+          <label>Material Utama</label>
+          <div class="material-chips" id="materialChips">
+            <span class="chip active" data-val="hpl" onclick="selectMaterial(this)">HPL</span>
+            <span class="chip" data-val="kayu" onclick="selectMaterial(this)">Kayu Solid</span>
+            <span class="chip" data-val="granit" onclick="selectMaterial(this)">Granit</span>
+            <span class="chip" data-val="marmer" onclick="selectMaterial(this)">Marmer</span>
+            <span class="chip" data-val="cat" onclick="selectMaterial(this)">Cat Dekoratif</span>
+            <span class="chip" data-val="wallpaper" onclick="selectMaterial(this)">Wallpaper</span>
+            <span class="chip" data-val="vinyl" onclick="selectMaterial(this)">Vinyl</span>
+            <span class="chip" data-val="plywood" onclick="selectMaterial(this)">Plywood Premium</span>
+          </div>
+        </div>
+
+        <!-- Template -->
+        <div class="form-group" style="margin-bottom:4px">
+          <label>Pilih Template Desain</label>
+        </div>
+        <div class="template-grid" id="templateGrid">
+          <div class="template-card" data-tpl="kitchensheet" onclick="selectTemplate(this)">
+            <img src="https://images.livspace-cdn.com/plain/https://d3gq2merok8n5r.cloudfront.net/abhinav/ond-1634120396-Obfdc/jas-1657179080-NnXAg/kitchen-1657189966-XPfvA/132-1658907853-Q5EAJ.png" alt="Kitchen sheet" loading="lazy" />
+            <div class="template-card-label">Kitchen Sheet</div>
+          </div>
+          <div class="template-card" data-tpl="scandinavian" onclick="selectTemplate(this)">
+            <img src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=400&q=75" alt="Scandinavian" loading="lazy" />
+            <div class="template-card-label">Scandinavian</div>
+          </div>
+          <div class="template-card" data-tpl="industrial" onclick="selectTemplate(this)">
+            <img src="https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=400&q=75" alt="Industrial" loading="lazy" />
+            <div class="template-card-label">Industrial</div>
+          </div>
+          <div class="template-card" data-tpl="modern" onclick="selectTemplate(this)">
+            <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&q=75" alt="Modern" loading="lazy" />
+            <div class="template-card-label">Modern</div>
+          </div>
+          <div class="template-card" data-tpl="klasik" onclick="selectTemplate(this)">
+            <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=400&q=75" alt="Klasik" loading="lazy" />
+            <div class="template-card-label">Klasik</div>
+          </div>
+          <div class="template-card" data-tpl="japandi" onclick="selectTemplate(this)">
+            <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&q=75" alt="Japandi" loading="lazy" />
+            <div class="template-card-label">Japandi</div>
+          </div>
+        </div>
+
+        <!-- Estimate result -->
+        <div class="estimate-result" id="estimateResult">
+          <div class="estimate-row">
+            <span class="label"><i class="fa-solid fa-ruler" style="margin-right:6px;color:var(--brand-500)"></i>Luas Ruangan</span>
+            <span class="val" id="estArea">20 m²</span>
+          </div>
+          <div class="estimate-row">
+            <span class="label"><i class="fa-solid fa-layer-group" style="margin-right:6px;color:var(--brand-500)"></i>Material</span>
+            <span class="val" id="estMat">HPL</span>
+          </div>
+          <div class="estimate-row">
+            <span class="label"><i class="fa-solid fa-paintbrush" style="margin-right:6px;color:var(--brand-500)"></i>Gaya Desain</span>
+            <span class="val" id="estStyle">Minimalis</span>
+          </div>
+          <div class="estimate-row">
+            <span class="label"><i class="fa-solid fa-boxes-stacked" style="margin-right:6px;color:var(--brand-500)"></i>Est. Material</span>
+            <span class="val" id="estMatCost">Rp 8.400.000</span>
+          </div>
+          <div class="estimate-row">
+            <span class="label"><i class="fa-solid fa-user-helmet-safety" style="margin-right:6px;color:var(--brand-500)"></i>Est. Jasa</span>
+            <span class="val" id="estJasa">Rp 12.000.000</span>
+          </div>
+          <div class="estimate-total">
+            <span class="label">Total Estimasi</span>
+            <span class="val" id="estTotal">Rp 20.400.000</span>
+          </div>
+          <div class="estimate-dp" id="estDp">DP 30% ≈ Rp 6.120.000</div>
+        </div>
+
+        <!-- CTA buttons -->
+        <button class="btn-sim" onclick="sendWA()">
+          <i class="fa-brands fa-whatsapp" style="font-size:18px"></i>
+          Konsultasi via WhatsApp
+        </button>
+        <div class="lokasi-badge" style="justify-content:center">
+          <i class="fa-solid fa-compass-drafting"></i>
+          <span style="font-size:11px">Pengukuran on-location tersedia di Jakarta, Tangerang &amp; Banten</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="tentang">
+    <div style="text-align:center">
+      <p class="section-tag">Klien Kami</p>
+      <h2 class="section-title">Client <em>History</em></h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card fade-up">
+        <img src="img1.jpeg" width="300" height="200" alt="">
+      </div>
+      <div class="testi-card fade-up">
+        <img src="img2.jpeg" width="300" height="200" alt="">
+      </div>
+        <div class="testi-card fade-up">
+        <img src="img3.jpeg" width="300" height="200" alt="">
+      </div>
+      <div class="testi-card fade-up">
+        <img src="img4.jpeg" width="300" height="200" alt="">
+      </div>
+    <div class="testi-card fade-up">
+        <img src="img5.jpeg" width="300" height="200" alt="">
+      </div>
+      <div class="testi-card fade-up">
+        <img src="img6.jpeg" width="300" height="200" alt="">
+      </div>
+      <div class="testi-card fade-up">
+        <img src="img7.jpeg" width="300" height="200" alt="">
+      </div>
+      <div class="testi-card fade-up">
+        <img src="img8.jpeg" width="300" height="200" alt="">
+      </div>
+      <div class="testi-card fade-up">
+        <img src="img9.jpeg" width="300" height="200" alt="">
+      </div>
+      <div class="testi-card fade-up">
+        <img src="img10.jpeg" width="300" height="200" alt="">
+      </div>
+      <div class="testi-card fade-up">
+        <img src="img11.jpeg" width="300" height="200" alt="">
+      </div>
+      <div class="testi-card fade-up">
+        <img src="img12.jpeg" width="300" height="200" alt="">
+      </div>
+      <div class="testi-card fade-up">
+        <img src="img13.jpeg" width="300" height="200" alt="">
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="kontak">
+    <h2 class="section-title" style="text-align:center">Wujudkan <em>Ruang Impian</em> Anda</h2>
+    <p class="section-subtitle" style="text-align:center; max-width:480px; margin:14px auto 0">Konsultasi gratis, tanpa komitmen — ceritakan visi Anda kepada kami sekarang</p>
+    <div class="contact-cards">
+      <a href="tel:085943576826" class="contact-card">
+        <i class="fa-solid fa-phone"></i> 085943576826
+      </a>
+      <a href="mailto:oeamint01@gmail.com" class="contact-card">
+        <i class="fa-solid fa-envelope"></i> oeamint01@gmail.com
+      </a>
+      <div class="contact-card">
+        <i class="fa-solid fa-location-dot"></i> Jakarta · Tangerang · Banten
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:10px">
+      <a href="https://wa.me/6285943576826" target="_blank" class="btn-wa">
+        <i class="fa-brands fa-whatsapp" style="font-size:20px"></i>
+        Chat WhatsApp Sekarang
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    © <span id="year"></span> Luxvint Studio. Seluruh hak cipta dilindungi. &nbsp;·&nbsp; Jakarta, Tangerang &amp; Banten
+  </footer>
+
+  <script>
+    // ── Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ── Navbar scroll
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // ── Carousel
+    const slideData = [
+      { badge: 'Minimalis Modern', title: 'Ruang Tamu<br>Minimalis Modern', desc: 'Desain bersih dengan sentuhan hangat kayu dan material premium pilihan terbaik' },
+      { badge: 'Scandinavian',     title: 'Kamar Tidur<br>Scandinavian',     desc: 'Ketenangan dalam setiap detail — cahaya alami, tekstur lembut, dan fungsionalitas tinggi' },
+      { badge: 'Modern Contemporary', title: 'Dapur<br>Kontemporer',         desc: 'Ruang memasak yang inspiratif — granit premium, kabinet custom, dan tata cahaya sempurna' },
+      { badge: 'Industrial Chic',  title: 'Ruang Kerja<br>Industrial Chic',  desc: 'Produktivitas bertemu estetika — beton ekspos, kayu solid, dan pencahayaan dramatis' },
+    ];
+
+    let current = 0, autoTimer;
+    const dotsEl = document.getElementById('dots');
+
+    // Build dots
+    slideData.forEach((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.onclick = () => goTo(i);
+      dotsEl.appendChild(d);
+    });
+
+    function goTo(n) {
+      document.getElementById('slide-' + current).classList.remove('active');
+      dotsEl.children[current].classList.remove('active');
+      current = (n + slideData.length) % slideData.length;
+      document.getElementById('slide-' + current).classList.add('active');
+      dotsEl.children[current].classList.add('active');
+      const d = slideData[current];
+      const badge = document.getElementById('heroBadge');
+      const title = document.getElementById('heroTitle');
+      const desc  = document.getElementById('heroDesc');
+      badge.style.opacity = '0'; title.style.opacity = '0'; desc.style.opacity = '0';
+      setTimeout(() => {
+        badge.textContent = d.badge;
+        title.innerHTML   = d.title;
+        desc.textContent  = d.desc;
+        badge.style.opacity = ''; title.style.opacity = ''; desc.style.opacity = '';
+      }, 200);
+    }
+
+    function prevSlide() { clearInterval(autoTimer); startAuto(); goTo(current - 1); }
+    function nextSlide() { clearInterval(autoTimer); startAuto(); goTo(current + 1); }
+
+    function startAuto() {
+      autoTimer = setInterval(() => goTo(current + 1), 5500);
+    }
+    startAuto();
+
+    // ── Material & Template selection
+    let selMaterial = 'hpl';
+    let selTemplate = 'minimalis';
+
+    function selectMaterial(el) {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      selMaterial = el.dataset.val;
+      calcEstimate();
+    }
+
+    function selectTemplate(el) {
+      document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selTemplate = el.dataset.tpl;
+      calcEstimate();
+    }
+
+    // ── Estimate calculator
+    const materialRate = {
+      hpl: 420000, kayu: 780000, granit: 650000, marmer: 980000,
+      cat: 250000, wallpaper: 380000, vinyl: 310000, plywood: 520000
+    };
+    const materialLabel = {
+      hpl: 'HPL', kayu: 'Kayu Solid', granit: 'Granit', marmer: 'Marmer',
+      cat: 'Cat Dekoratif', wallpaper: 'Wallpaper', vinyl: 'Vinyl', plywood: 'Plywood Premium'
+    };
+    const styleMultiplier = {
+      minimalis: 1.0, scandinavian: 1.15, industrial: 1.1,
+      modern: 1.2, klasik: 1.35, japandi: 1.25
+    };
+    const styleLabel = {
+      minimalis: 'Minimalis', scandinavian: 'Scandinavian', industrial: 'Industrial',
+      modern: 'Modern', klasik: 'Klasik', japandi: 'Japandi'
+    };
+    const jasaBase = { living: 700000, bedroom: 600000, kitchen: 850000, office: 650000, dining: 600000, bathroom: 950000 };
+
+    function fmt(n) {
+      return 'Rp ' + Math.round(n).toLocaleString('id-ID');
+    }
+
+    function calcEstimate() {
+      const L  = parseFloat(document.getElementById('roomL').value) || 0;
+      const W  = parseFloat(document.getElementById('roomW').value) || 0;
+      const area = L * W;
+      const type = document.getElementById('roomType').value;
+      const matCost  = area * (materialRate[selMaterial] || 420000);
+      const jasaCost = area * (jasaBase[type] || 700000) * (styleMultiplier[selTemplate] || 1);
+      const total    = matCost + jasaCost;
+      const dp       = total * 0.3;
+
+      document.getElementById('estArea').textContent   = area.toFixed(1) + ' m²';
+      document.getElementById('estMat').textContent    = materialLabel[selMaterial] || '-';
+      document.getElementById('estStyle').textContent  = styleLabel[selTemplate] || '-';
+      document.getElementById('estMatCost').textContent = fmt(matCost);
+      document.getElementById('estJasa').textContent    = fmt(jasaCost);
+      document.getElementById('estTotal').textContent   = fmt(total);
+      document.getElementById('estDp').textContent      = 'DP 30% ≈ ' + fmt(dp);
+    }
+
+    calcEstimate();
+
+    // ── Send WhatsApp
+    function sendWA() {
+      const L    = document.getElementById('roomL').value;
+      const W    = document.getElementById('roomW').value;
+      const type = document.getElementById('roomType').options[document.getElementById('roomType').selectedIndex].text;
+      const name = document.getElementById('roomName').value || type;
+      const mat  = materialLabel[selMaterial];
+      const sty  = styleLabel[selTemplate];
+      const tot  = document.getElementById('estTotal').textContent;
+      const dp   = document.getElementById('estDp').textContent;
+      const msg  = encodeURIComponent(
+        `Halo Luxvint Studio! 👋\n\nSaya ingin konsultasi desain interior:\n\n` +
+        `🏠 *Ruangan:* ${name}\n` +
+        `📐 *Ukuran:* ${L} x ${W} meter\n` +
+        `🪵 *Material:* ${mat}\n` +
+        `🎨 *Gaya:* ${sty}\n` +
+        `💰 *Estimasi:* ${tot}\n` +
+        `💳 *${dp}*\n\n` +
+        `Mohon info lebih lanjut dan jadwal konsultasi. Terima kasih!`
+      );
+      window.open(`https://wa.me/6285943576826?text=${msg}`, '_blank');
+    }
+
+    // ── Scroll animations
+    const fadeEls = document.querySelectorAll('.fade-up');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.15 });
+    fadeEls.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
