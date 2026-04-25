@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://luxvint.vercel.app/sitemap.xml
+Sitemap: https://luxvint.amynt.my.id/sitemap.xml
